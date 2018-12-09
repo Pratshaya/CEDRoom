@@ -6,6 +6,7 @@ use App\Booking;
 use App\Room;
 use App\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -16,7 +17,8 @@ class BookingController extends Controller
      */
     public function index()
     {
-        return View('booking.index');
+        $bookings = Booking::all();
+        return View('booking.index', compact('bookings'));
     }
 
     /**
@@ -41,21 +43,24 @@ class BookingController extends Controller
     {
         $request->validate([
             'detail'=>'required',
-            'start_time'=> 'required|date',
-            'end_time' => 'required|date',
-            'room_id'=> 'room_id',
-            'class_id'=>'class_id'
+            'date'=>'required',
+            'start_time'=> 'required',
+            'e_time' => 'required',
+            'room_id'=> 'required',
+            'users_id'=> 'required',
+
         ]);
         $booking = new Booking([
             'detail' => $request->get('detail'),
             'date' => $request->get('date'),
             'start_time'=> $request->get('start_time'),
-            'end_time'=> $request->get('end_time'),
+            'e_time'=> $request->get('e_time'),
             'room_id'=> $request->get('room_id'),
-            'class_id'=> $request->get('class_id')
+            'users_id'=> Auth::id(),
         ]);
-        $booking->save();
-        return redirect('/bookings')->with('success', 'Booking has been added');
+       // $request->only(['user_id'=>Auth::id()]);
+        Booking::create($request->all());
+        return redirect('/booking')->with('success', 'Booking has been added');
     }
 
     /**
@@ -75,11 +80,11 @@ class BookingController extends Controller
      * @param  \App\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function edit(Booking $booking)
+    public function edit(Booking $booking, Room $rooms)
     {
-        $booking = Booking::find($booking);
-
-        return view('booking.edit', compact('booking'));
+        $bookings = Booking::find($booking->id);
+        $rooms = Room::where('status_id','=', 2)->get();
+        return View('booking.edit', compact('bookings'), compact('rooms'));
     }
 
     /**
@@ -92,16 +97,20 @@ class BookingController extends Controller
     public function update(Request $request, Booking $booking)
     {
         $request->validate([
-            'share_name'=>'required',
-            'share_price'=> 'required|integer',
-            'share_qty' => 'required|integer'
+            'detail'=>'required',
+            'date'=>'required',
+            'start_time'=>'required',
+            'e_time'=>'required',
+            'room_id'=>'required',
         ]);
 
-        $share = Share::find($id);
-        $share->share_name = $request->get('share_name');
-        $share->share_price = $request->get('share_price');
-        $share->share_qty = $request->get('share_qty');
-        $share->save();
+        $bookings = Booking::find($booking->id);
+        $bookings->detail = $request->get('detail');
+        $bookings->date = $request->get('date');
+        $bookings->start_time = $request->get('start_time');
+        $bookings->e_time = $request->get('e_time');
+        $bookings->room_id = $request->get('room_id');
+        $bookings->save();
 
         return redirect('/booking')->with('success', 'Booking has been updated');
     }
@@ -114,6 +123,9 @@ class BookingController extends Controller
      */
     public function destroy(Booking $booking)
     {
-        //
+        $booking = Booking::find($booking->id);
+        $booking->delete();
+
+        return redirect('/booking')->with('success', 'Booking has been deleted Successfully');
     }
 }

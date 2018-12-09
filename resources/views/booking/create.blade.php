@@ -9,36 +9,50 @@
             <form method="post" action="{{route('booking.store')}}">
                 <div class="form-group">
                     @csrf
-                    <label for="name">Booking Detail:</label>
-                    <input type="text" class="form-control" name="detail"/>
+                    <input type="hidden" class="form-control" name="users_id"
+                           value="{{\Illuminate\Support\Facades\Auth::id()}}"/>
+                    <label for="name">Booking Detail:</label><br/>
+
+                    <input type="radio" name="detail" value="learn"> Learn<br>
+
+                    <input type="radio" name="detail" value="presentation"> Presentation<br>
+                    <input type="radio" name="detail" value="conference">Conference<br>
+                    <input type="radio" name="detail"  value="other"> Other
                 </div>
                 <div class="form-group">
                     <label for="price">Date:</label>
-                    <input type="date" class="form-control" name="date"/>
+                    <input type="date" name="date"/>
                 </div>
                 <div class="form-group">
-                    <label for="price">Start Time and End Time ((format ex. 12.00 AM)) : </label>
-                    <input type="time" class="form-control" name="start_time"/>
-                    <input type="time" class="form-control" name="e_time"/>
-                </div>
-
-                <div class="form-group">
-                    @csrf
-                    <label for="name">Room:</label>
-                    <select class="form-control">
-                        @foreach($rooms as $room)
-                            <option value="{{$room->name}}" id="{{$room->id}}">{{$room->name}}</option>
-                        @endforeach
+                    <label for="price">Start Time and End Time: </label>
+                    <select class="form-control" name="start_time">
+                        <option value="8">08.00</option>
+                        <option value="9">09.00</option>
+                        <option value="10">10.00</option>
+                        <option value="11">11.00</option>
+                        <option value="12">12.00</option>
+                        <option value="13">13.00</option>
+                        <option value="14">14.00</option>
+                        <option value="15">15.00</option>
+                    </select>
+                    <select class="form-control" name="e_time">
+                        <option value="9">09.00</option>
+                        <option value="10">10.00</option>
+                        <option value="11">11.00</option>
+                        <option value="12">12.00</option>
+                        <option value="13">13.00</option>
+                        <option value="14">14.00</option>
+                        <option value="15">15.00</option>
+                        <option value="16">16.00</option>
                     </select>
                 </div>
                 <div class="form-group">
                     @csrf
-                    <label for="name">Class Name:</label>
-                    <select class="form-control">
-                        <option value="CED1-RA" id="1">CED1-RA</option>
-                        <option value="CED2-RA" id="2">CED2-RA</option>
-                        <option value="CED3-RA" id="3">CED3-RA</option>
-                        <option value="CED4-RA" id="4">CED4-RA</option>
+                    <label for="name">Room:</label>
+                    <select class="form-control" name="room_id">
+                        @foreach($rooms as $room)
+                            <option value="{{$room->id}}" id="{{$room->id}}">{{$room->name}}</option>
+                        @endforeach
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Add</button>
